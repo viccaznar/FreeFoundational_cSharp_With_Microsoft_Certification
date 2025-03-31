@@ -1,4 +1,4 @@
-﻿string? readResult;
+string? readResult;
 string valueEntered = "";
 int numValue = 0;
 bool validNumber = false;
