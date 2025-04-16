@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 CultureInfo.CurrentCulture = new CultureInfo("en-US");
