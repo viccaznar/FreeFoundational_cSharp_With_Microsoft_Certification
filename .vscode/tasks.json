@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "dotnet",
+			"task": "build C:\\Temp\\ws-microsot-learn\\testProjects\\CsharpProjects\\TestProject\\TestProject.csproj",
+			"file": "C:\\Temp\\ws-microsot-learn\\testProjects\\CsharpProjects\\TestProject\\TestProject.csproj",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "dotnet: build C:\\Temp\\ws-microsot-learn\\testProjects\\CsharpProjects\\TestProject\\TestProject.csproj"
+		},
+		{
+			"type": "msbuild",
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build",
+			"label": "Build: solution",
+			"detail": "Build the TestProject.sln solution using dotnet build"
+		},
+		{
+			"type": "dotnet",
+			"task": "build",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "dotnet: build"
+		}
+	]
+}

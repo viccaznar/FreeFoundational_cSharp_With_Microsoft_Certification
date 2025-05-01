@@ -1,158 +1,72 @@
-﻿string? readResult = null;
-bool useTestData = false;
+﻿using System.Diagnostics;
 
-Console.Clear();
+int productCount = 2000;
+string[,] products = new string[productCount, 2];
 
-int[] cashTill = new int[] { 0, 0, 0, 0 };
-// int     registerCheckTillTotal = 0; // Não precisamos mais inicializar aqui
+LoadProducts(products, productCount);
 
-// registerDailyStartingCash: $1 x 50, $5 x 20, $10 x 10, $20 x 5 => ($350 total)
-int[,] registerDailyStartingCash = new int[,] { { 1, 50 }, { 5, 20 }, { 10, 10 }, { 20, 5 } };
-
-int[] testData = new int[] { 6, 10, 17, 20, 31, 36, 40, 41 };
-int testCounter = 0;
-
-LoadTillEachMorning(registerDailyStartingCash, cashTill);
-
-// registerCheckTillTotal = registerDailyStartingCash[0, 0] * registerDailyStartingCash[0, 1] + registerDailyStartingCash[1, 0] * registerDailyStartingCash[1, 1] + registerDailyStartingCash[2, 0] * registerDailyStartingCash[2, 1] + registerDailyStartingCash[3, 0] * registerDailyStartingCash[3, 1]; // Calculado apenas no início
-
-// display the number if bills of each denomination currently in the till
-LogTillStatus(cashTill);
-
-// display a message showing the amount of cash in the till
-Console.WriteLine(TillAmountSummary(cashTill));
-
-// Display the expected registerDailyStartingCash total
-Console.WriteLine($"Expected Initial Till Value: {registerDailyStartingCash[0, 0] * registerDailyStartingCash[0, 1] + registerDailyStartingCash[1, 0] * registerDailyStartingCash[1, 1] + registerDailyStartingCash[2, 0] * registerDailyStartingCash[2, 1] + registerDailyStartingCash[3, 0] * registerDailyStartingCash[3, 1]}\n\r");
-
-var valueGenerator = new Random((int)DateTime.Now.Ticks);
-
-int transactions = 10;
-
-if (useTestData)
+for (int i = 0; i < productCount; i++)
 {
-    transactions = testData.Length;
+    string result;
+    result = Process1(products, i);
+
+    if (result != "obsolete")
+    {
+        result = Process2(products, i);
+    }
 }
 
-while (transactions > 0)
+bool pauseCode = true;
+while (pauseCode == true) ;
+
+static void LoadProducts(string[,] products, int productCount)
 {
-    transactions -= 1;
-    int itemCost = valueGenerator.Next(2, 20);
+    Random rand = new Random();
 
-    if (useTestData)
+    for (int i = 0; i < productCount; i++)
     {
-        itemCost = testData[testCounter];
-        testCounter += 1;
+        int num1 = rand.Next(1, 10000) + 10000;
+        int num2 = rand.Next(1, 101);
+
+        string prodID = num1.ToString();
+
+        if (num2 < 91)
+        {
+            products[i, 1] = "existing";
+        }
+        else if (num2 == 91)
+        {
+            products[i, 1] = "new";
+            prodID = prodID + "-n";
+        }
+        else
+        {
+            products[i, 1] = "obsolete";
+            prodID = prodID + "-0";
+        }
+
+        products[i, 0] = prodID;
     }
-
-    int paymentOnes = itemCost % 2;
-    int paymentFives = (itemCost % 10 > 7) ? 1 : 0;
-    int paymentTens = (itemCost % 20 > 13) ? 1 : 0;
-    int paymentTwenties = (itemCost < 20) ? 1 : 2;
-
-    // display messages describing the current transaction
-    Console.WriteLine($"Customer is making a {itemCost} purchase");
-    Console.WriteLine($"\t Using {paymentTwenties} twenty dollar bills");
-    Console.WriteLine($"\t Using {paymentTens} ten dollar bills");
-    Console.WriteLine($"\t Using {paymentFives} five dollar bills");
-    Console.WriteLine($"\t Using {paymentOnes} one dollar bills");
-
-    // MakeChange manages the transaction and updates Till
-    string transactionMessage = MakeChange(itemCost, cashTill, paymentTwenties, paymentTens, paymentFives, paymentOnes);
-
-    // Backup Calculation - each transaction adds a current "itemCost" to the till
-    if (transactionMessage == "Transaction successed") // Corrigi o erro de digitação na mensagem
-    {
-        Console.WriteLine($"Transaction successfully completed.");
-        // registerCheckTillTotal += itemCost; // Não precisamos mais atualizar assim
-    }
-    else
-    {
-        Console.WriteLine($"Transaction unsuccessfull: {transactionMessage}");
-    }
-
-    Console.WriteLine(TillAmountSummary(cashTill));
-    Console.WriteLine($"Expected till value: {TillAmountSummary(cashTill)}\n\r"); // Agora recalculamos o valor real do caixa
-    Console.WriteLine();
 }
 
-Console.WriteLine("Press the Enter key to exit");
-do
+static string Process1(string[,] products, int item)
 {
-    readResult = Console.ReadLine();
+    Console.WriteLine($"Process1 message - working on {products[item, 1]} product");
 
-} while (readResult == null);
-
-static void LoadTillEachMorning(int[,] registerDailyStartingCash, int[] cashTill)
-{
-    cashTill[0] = registerDailyStartingCash[0, 1];
-    cashTill[1] = registerDailyStartingCash[1, 1];
-    cashTill[2] = registerDailyStartingCash[2, 1];
-    cashTill[3] = registerDailyStartingCash[3, 1];
+    return products[item, 1];
 }
 
-static string MakeChange(int cost, int[] cashTill, int twenties, int tens = 0, int fives = 0, int ones = 0)
+static string Process2(string[,] products, int item)
 {
-    string transactionMessage = "";
+    Console.WriteLine($"Process2 message - working on product ID #: {products[item, 0]}");
+    if (products[item, 1] == "new")
+        Process3(products, item);
 
-    cashTill[3] += twenties;
-    cashTill[2] += tens;
-    cashTill[1] += fives;
-    cashTill[0] += ones;
-
-    int amountPaid = twenties * 20 + tens * 10 + fives * 5 + ones;
-    int changeNeeded = amountPaid - cost;
-
-    if (changeNeeded < 0)
-        transactionMessage = "Not enough money provided.";
-
-    Console.WriteLine("Cashier Returns: ");
-
-    while ((changeNeeded > 19) && (cashTill[3] > 0))
-    {
-        cashTill[3]--;
-        changeNeeded -= 20;
-        Console.WriteLine("\t A twenty");
-    }
-    while ((changeNeeded > 9) && (cashTill[2] > 0))
-    {
-        cashTill[2]--;
-        changeNeeded -= 10;
-        Console.WriteLine("\t A ten");
-    }
-    while ((changeNeeded > 4) && (cashTill[1] > 0))
-    {
-        cashTill[1]--; // Corrigi aqui: era cashTill[2]--
-        changeNeeded -= 5;
-        Console.WriteLine("\t A five");
-    }
-    while ((changeNeeded > 0) && (cashTill[0] > 0))
-    {
-        cashTill[0]--;
-        changeNeeded--;
-        Console.WriteLine("\t A one");
-    }
-
-    if (changeNeeded > 0)
-        transactionMessage = "Can't make change. Do you have anything smaller?";
-
-    if (transactionMessage == "")
-        transactionMessage = "Transaction successed"; // Corrigi o erro de digitação
-
-    return transactionMessage;
+    return "continue";
 }
 
-static void LogTillStatus(int[] cashTill)
+static void Process3(string[,] products, int item)
 {
-    Console.WriteLine("The till currently has:");
-    Console.WriteLine($"{cashTill[3] * 20} in twenties");
-    Console.WriteLine($"{cashTill[2] * 10} in tens");
-    Console.WriteLine($"{cashTill[1] * 5} in fives");
-    Console.WriteLine($"{cashTill[0]} in ones");
-    Console.WriteLine();
-}
+    Console.WriteLine($"Process3 message - processing product information for 'new' product");
 
-static string TillAmountSummary(int[] cashTill)
-{
-    return $"The till has {cashTill[3] * 20 + cashTill[2] * 10 + cashTill[1] * 5 + cashTill[0]} dollars";
 }

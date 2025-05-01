@@ -2,13 +2,81 @@
     "version": "0.2.0",
     "configurations": [
       {
+        "name": "Launch Program123",
+        "program": "${workspaceFolder}/app.js",
+        "request": "launch",
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "type": "node"
+      },
+      {
+        "name": "PowerShell: Binary Module Interactive",
+        "type": "PowerShell",
+        "request": "launch",
+        "script": "Enter command to import your binary module, for example: \"Import-Module -Force /path/to/module.psd1|dll\"",
+        "createTemporaryIntegratedConsole": true,
+        "attachDotnetDebugger": true
+      },
+      {
+        "name": "PowerShell Interactive Session",
+        "type": "PowerShell",
+        "request": "launch",
+        "cwd": "${cwd}"
+      },
+      {
+        "name": "PowerShell Attach to Host Process",
+        "type": "PowerShell",
+        "request": "attach"
+      },
+      
+      {
+        "name": ".NET Core Attach",
+        "type": "coreclr",
+        "request": "attach"
+      },
+      {
+        "name": ".NET Core Launch (console)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/bin/Debug/<target-framework>/<project-name.dll>",
+        "args": [],
+        "cwd": "${workspaceFolder}",
+        "stopAtEntry": false,
+        "console":"externalTerminal"
+      },
+      {
+        "args": [
+          "--extensionDevelopmentPath=${workspaceFolder}"
+        ],
+        "name": "Launch Extension",
+        "outFiles": [
+          "${workspaceFolder}/out/**/*.js"
+        ],
+        "preLaunchTask": "npm",
+        "request": "launch",
+        "type": "extensionHost"
+      },
+      {
+        "name": "PowerShell Attach to Host Process",
+        "type": "PowerShell",
+        "request": "attach"
+      },
+      {
+        "name": "C#: <project-name> Debug",
+        "type": "dotnet",
+        "request": "launch",
+        "projectPath": "${workspaceFolder}/<relative-path-to-project-folder><project-name>.csproj"
+      },
+      {
         "name": ".NET Core Launch (console)",
         "type": "coreclr",
         "request": "launch",
         "program": "${workspaceFolder}/bin/Debug/net8.0/SeuProjeto.dll",
         "args": [],
         "cwd": "${workspaceFolder}",
-        "console": "integratedTerminal",
+        "console":"integratedTerminal",
         "stopAtEntry": false
       }
     ]
